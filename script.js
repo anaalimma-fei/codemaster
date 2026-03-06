@@ -138,3 +138,13 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 });
+
+// Observa cada seção para aplicar a animação
+sections.forEach((section) => observer.observe (section));
+
+//==================== BOTÃO DE VOLTA AO TOPO ==================
+//Adiciona um evento de clique ao botão de volta ao topo
+document.querySelector('.top a').addEventListener('click' , (e) => {
+    e.preventDefault();
+    window.scrollTo({top: 0, beahvior: 'smooth'}); //Rola suavemente para o topo da página
+});
