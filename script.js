@@ -148,3 +148,83 @@ document.querySelector('.top a').addEventListener('click' , (e) => {
     e.preventDefault();
     window.scrollTo({top: 0, beahvior: 'smooth'}); //Rola suavemente para o topo da página
 });
+
+//====================== CARROSSEL DE PROJETOS ======================
+//Seleciona os elementos do carrossel
+
+const carouselSlides = document.querySelector('.carousel-slides');
+const slides = document.querySelectorAll('.carousel-slide');
+const prevButton = document.querySelector('.carousel-button.prev');
+const nextButton = document.querySelector('.carousel-button.next');
+let currentSlide = 0;
+let autoSlideInterval;
+
+// função para exibir o slide atual
+function showSlide(slideIndex) {
+    slides.forEach(slide => {
+        slide.classList.remove('active');
+        slide.style.display = 'none';
+    });
+
+    // ajusta o indice do slide para garantir que ele esteja dento dos limites
+    if(slideIndex < 0) currentSlide = slides.length - 1;
+    else if (slideIndex >= slides.length) currentSlide = 0;
+    else currentSlide = slideIndex;
+
+    // exibeo slide atual
+    slides[currentSlide].classList.add('active');
+    slides[currentSlide].style.display = 'flex';
+    updateSlidePosition();
+}
+
+//função para atualizar a posição do carrosel
+function updateSlidePosition() {
+    const slideWidth = slides[0].offsetWidth;
+    carouselSlides.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+}
+
+//funcao para avancar para o proximo slide
+function nextSlide() {
+    showSlide(currentSlide + 1);
+    resetAutoSlide(); //reiicia o intervalo de transição
+}
+
+//função para voltar ao slide anterior
+function prevSlide(){
+    showSlide(currentSlide - 1);
+    resetAutoSlide(); //reinicia o intervalo de transição
+}
+
+//função para iniciar a transição automarica dos slides
+function startAutoSlide() {
+    autoSlideInterval = setInterval(nextSlide, 5000); //avanca o slide a cada 5 segundos
+}
+
+//função para reniciar a transição automatica
+function resetAutoSlide() {
+    clearInterval(autoSlideInterval);
+    startAutoSlide();
+}
+
+//adiciona eventos de clique aos botoes de navegaçao do carrossel
+nextButton.addEventListener('click', nextSlide);
+prevButton.addEventListener('click', prevSlide);
+
+//inicializa o carrossel ao carregar a pagina
+window.addEventListener('load', () => {
+    showSlide(currentSlide);
+    startAutoSlide();
+
+    //atualiza a posicao do carrossel ao redimensionar a janela 
+    window.addEventListener('resize', () => {
+        updateSlidePosition();
+    });
+});
+
+//pausa a transição automatica ao passar o mouse sobre o carrossel 
+carouselSlides.parentElement.addEventListener('mouseenter', () => {
+    clearInterval(autoSlideInterval);
+});
+
+//retoma a transição automatica ao remover o mouse do carrossel
+carouselSlides.parentElement.addEventListener('mouseleave', startAutoSlide);
